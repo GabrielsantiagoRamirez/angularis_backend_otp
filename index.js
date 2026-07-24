@@ -76,6 +76,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.post('/api/enviar-formulario', async (req, res) => {
+  console.log(req.body);
   try {
     const nombreCompleto = normalizeText(req.body.nombreCompleto);
     const correoCorporativo = normalizeText(req.body.correoCorporativo);
