@@ -34,7 +34,8 @@ const emailPort = Number(process.env.EMAIL_PORT || 465);
 const emailSecure = process.env.EMAIL_SECURE === 'true';
 const emailUser = process.env.EMAIL_USER?.trim();
 const emailPass = process.env.EMAIL_PASS;
-const emailFrom = process.env.EMAIL_FROM?.trim() || emailUser;
+const emailFromName =
+  process.env.EMAIL_FROM_NAME?.trim() || 'TaleX';
 const emailTo = process.env.EMAIL_TO?.trim() || emailUser;
 
 if (!emailHost || !emailUser || !emailPass) {
@@ -132,7 +133,10 @@ app.post('/api/enviar-formulario', async (req, res) => {
     };
 
     const info = await transporter.sendMail({
-      from: emailFrom,
+      from: {
+        name: emailFromName,
+        address: emailUser
+      },
       to: emailTo,
 
       // Al responder el correo, responderá al interesado
