@@ -242,13 +242,19 @@ Fecha de recepción: ${new Date().toLocaleString('es-CO', {
     console.error('Error al enviar el correo:', {
       message: error.message,
       code: error.code,
+      response: error.response,
+      responseCode: error.responseCode,
       command: error.command
     });
-
     return res.status(500).json({
       success: false,
-      message:
-        'No fue posible enviar la solicitud. Inténtalo nuevamente.'
+      message: 'No fue posible enviar la solicitud.',
+      debug: {
+        code: error.code,
+        response: error.response,
+        responseCode: error.responseCode,
+        command: error.command
+      }
     });
   }
 });
