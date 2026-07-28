@@ -1,3 +1,80 @@
+const express = require('express');
+const nodemailer = require('nodemailer');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://talex.com.co',
+  'https://www.talex.com.co'
+];
+
+const corsOptions = {
+  origin(origin, callback) {
+    // Permite peticiones sin origin, como Postman o health checks
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Origen no permitido por CORS'));
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '100kb' }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+
+const emailHost = process.env.EMAIL_HOST?.trim();
+const emailPort = Number(process.env.EMAIL_PORT || 465);
+const emailSecure = process.env.EMAIL_SECURE === 'true';
+const emailUser = process.env.EMAIL_USER?.trim();
+const emailPass = process.env.EMAIL_PASS;
+const emailFromName =
+  process.env.EMAIL_FROM_NAME?.trim() || 'TaleX';
+const emailTo = process.env.EMAIL_TO?.trim() || emailUser;
+
+if (!emailHost || !emailUser || !emailPass) {
+  console.warn('⚠️ Faltan variables de configuración SMTP');
+}
+
+const transporter = nodemailer.createTransport({
+  host: emailHost,
+  port: emailPort,
+  secure: emailSecure,
+  auth: {
+    user: emailUser,
+    pass: emailPass
+  }
+});
+
+/**
+ * Evita que los valores del formulario inyecten HTML
+ * dentro del correo.
+ */
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function normalizeText(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    service: 'TaleX Landing Backend'
+  });
+});
 app.post('/api/enviar-precotizacion', async (req, res) => {
   try {
     const nombreConjunto = normalizeText(req.body.nombreConjunto);
