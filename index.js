@@ -37,7 +37,7 @@ const emailSecure = process.env.EMAIL_SECURE === 'true';
 const emailUser = process.env.EMAIL_USER?.trim();
 const emailPass = process.env.EMAIL_PASS;
 const emailFromName =
-  process.env.EMAIL_FROM_NAME?.trim() || 'TaleX';
+  process.env.EMAIL_FROM_NAME?.trim() || 'Angularis';
 const emailTo = process.env.EMAIL_TO?.trim() || emailUser;
 
 if (!emailHost || !emailUser || !emailPass) {
