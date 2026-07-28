@@ -7,9 +7,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://talex.com.co',
-  'https://www.talex.com.co'
+  'http://127.0.0.1:5502',
+  'http://localhost:5502',
+  'http://127.0.0.1:5500',
+  'http://localhost:5500',
+  'https://angularis.com.co'
 ];
 
 const corsOptions = {
